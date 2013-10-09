@@ -38,8 +38,21 @@ Vagrant.configure('2') do |config|
     # the initial run when doing `vagrant up` is still going to fail because
     # it's still using an existing SSH connection.
     config.vm.synced_folder '.', '/vagrant', :disabled => true
+
+    # We can also create and mount EBS volumes directly here [1], but we'll do
+    # it with Chef as that's more flexible.
+    # [1] http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/block-device-mapping-concepts.html
+    #
+    # aws.block_device_mapping = [
+    #   { 'DeviceName'              => '/dev/sdf',
+    #     'VirtualName'             => 'mongodb_data',
+    #     'Ebs.VolumeSize'          => 20,
+    #     'Ebs.DeleteOnTermination' => true
+    #   }
+    # ]
   end
 
+  # TODO Use http://clarkdave.net/2013/04/managing-ebs-volumes-with-chef/ as reference
   config.vm.provision 'chef_solo' do |chef|
     chef.add_recipe 'mongodb'
   end
