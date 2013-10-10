@@ -12,3 +12,5 @@
 - Pre-read EBS volume to boost performance
 - Provisioend iops
 - RAID
+
+- Remove volumes on termination

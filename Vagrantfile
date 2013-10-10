@@ -43,6 +43,8 @@ Vagrant.configure('2') do |config|
     chef.add_recipe 'mongodb::10gen_repo'
     chef.add_recipe 'mongodb'
 
+    chef.cookbooks_path = ['cookbooks', 'my_cookbooks']
+
     if ENV['VAGRANT_DEBUG']
       chef.log_level = :debug
     end
@@ -57,6 +59,24 @@ Vagrant.configure('2') do |config|
       :ebs => {
         :access_key => ENV['AWS_ACCESS_KEY'],
         :secret_key => ENV['AWS_SECRET_KEY'],
+      }
+    }
+
+    if ENV['VAGRANT_EBS_RAID']
+      chef.json[:ebs][:raids] = {
+        '/dev/md0' => {
+          :num_disks     => 2,
+          :disk_size     => 10,
+#         :piops         => 2000,
+          :raid_level    => 0,
+          :fstype        => 'ext4',
+          :mount_point   => '/data',
+          :mount_options => 'noatime,noexec',
+#         :uselvm      => true,
+        }
+      }
+    else
+      chef.json[:ebs][:raids] = {
         :volumes => {
           '/data' => {
             :size          => 20,
@@ -65,6 +85,6 @@ Vagrant.configure('2') do |config|
           }
         }
       }
-    }
+    end
   end
 end
