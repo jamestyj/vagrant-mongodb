@@ -1,16 +1,10 @@
+# Install monitoring tools
 package 'htop'
 package 'dstat'
 package 'sysstat'
 
+# More awesome than screen
 package 'tmux'
 
-# package 'boost-devel'
-# package 'gcc'
-# package 'gcc-c++'
-# package 'libutempter-devel'
-# package 'ncurses'
-# package 'ncurses-devel'
-# package 'openssl-devel' 
-# package 'protobuf-compiler'
-# package 'protobuf-devel'
-# package 'zlib-devel'
+# Install MongoDB plugin for dstat
+execute "wget -P /usr/share/dstat/ https://raw.github.com/gianpaj/dstat/master/plugins/dstat_mongodb_cmds.py"
