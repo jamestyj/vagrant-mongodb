@@ -21,8 +21,11 @@ Vagrant.configure('2') do |config|
     # allowed.
     aws.security_groups = [ 'MongoDB' ]
 
-    # TODO Add the corresponding AMIs for other regions
-    aws.region_config 'eu-west-1', :ami => 'ami-149f7863'
+    # List of latest Amazon Linux AMIs (eg. amzn-ami-pv-2013.09.0.x86_64-ebs).
+    # Add the corresponding one for your region if neccessary.
+    aws.region_config 'ap-southeast-1', :ami => 'ami-14f2b946'
+    aws.region_config 'eu-west-1',      :ami => 'ami-149f7863'
+    aws.region_config 'us-east-1',      :ami => 'ami-35792c5c'
 
     # Workaround for https://github.com/mitchellh/vagrant/issues/1482.
     aws.user_data = File.read 'user_data.txt'
@@ -38,7 +41,10 @@ Vagrant.configure('2') do |config|
     config.vm.synced_folder '.', '/vagrant', :disabled => true
   end
 
+  # See http://docs.mongodb.org/manual/administration/production-notes/ for details.
   config.vm.provision 'chef_solo' do |chef|
+    chef.add_recipe 'utils'
+    chef.add_recipe 'mosh'
     chef.add_recipe 'ebs'
     chef.add_recipe 'mongodb::10gen_repo'
     chef.add_recipe 'mongodb'
@@ -52,13 +58,15 @@ Vagrant.configure('2') do |config|
     chef.json = {
       :mongodb => {
         :dbpath     => '/data',
-
-        # Turn on smallfiles to make the initial journal preallocation faster
-        :smallfiles => true
+        :smallfiles => true      # Speed up initial journal preallocation
       },
       :ebs => {
-        :access_key => ENV['AWS_ACCESS_KEY'],
-        :secret_key => ENV['AWS_SECRET_KEY'],
+        :access_key        => ENV['AWS_ACCESS_KEY'],
+        :secret_key        => ENV['AWS_SECRET_KEY'],
+        :fstype            => 'ext4',
+        :no_boot_config    => true,
+        :md_read_ahead     => 32,  # 16KB
+        # :mdadm_chunk_size] => 256,
       }
     }
 
@@ -67,12 +75,12 @@ Vagrant.configure('2') do |config|
         '/dev/md0' => {
           :num_disks     => 2,
           :disk_size     => 10,
-#         :piops         => 2000,
           :raid_level    => 0,
-          :fstype        => 'ext4',
+          :fstype        => chef.json[:ebs][:fstype],
           :mount_point   => '/data',
           :mount_options => 'noatime,noexec',
-#         :uselvm      => true,
+          # :piops       => 2000,
+          # :uselvm      => true,
         }
       }
     else
@@ -80,7 +88,7 @@ Vagrant.configure('2') do |config|
         :volumes => {
           '/data' => {
             :size          => 20,
-            :fstype        => 'ext4',
+            :fstype        => chef.json[:ebs][:fstype],
             :mount_options => 'noatime,noexec'
           }
         }
