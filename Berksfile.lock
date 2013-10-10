@@ -1,0 +1,21 @@
+{
+  "sources": {
+    "aws": {
+      "locked_version": "0.101.6"
+    },
+    "delayed_evaluator": {
+      "locked_version": "0.2.0"
+    },
+    "mongodb": {
+      "locked_version": "0.13.2",
+      "git": "git://github.com/edelight/chef-mongodb.git",
+      "ref": "baf6130fcebd3674ed67c601214addbcd167bb45"
+    },
+    "yum": {
+      "locked_version": "2.3.4"
+    },
+    "apt": {
+      "locked_version": "2.2.0"
+    }
+  }
+}
