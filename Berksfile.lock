@@ -6,6 +6,11 @@
     "delayed_evaluator": {
       "locked_version": "0.2.0"
     },
+    "ebs": {
+      "locked_version": "0.3.6",
+      "git": "git://github.com/jamestyj/chef-ebs.git",
+      "ref": "b13830fdca338a56a897c47d15c01e97c932d788"
+    },
     "mongodb": {
       "locked_version": "0.13.2",
       "git": "git://github.com/edelight/chef-mongodb.git",

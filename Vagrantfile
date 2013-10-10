@@ -34,8 +34,7 @@ Vagrant.configure('2') do |config|
     # Disable rsynced folders to avoid the "sudo: sorry, you must have a tty to
     # run sudo" error. See https://github.com/mitchellh/vagrant/issues/1482 for
     # details. Note that even though we have the workaround in user_data.txt,
-    # the initial run when doing `vagrant up` is still going to fail because
-    # it's still using an existing SSH connection.
+    # the initial run when doing `vagrant up` is still going to fail.
     config.vm.synced_folder '.', '/vagrant', :disabled => true
   end
 
@@ -44,8 +43,6 @@ Vagrant.configure('2') do |config|
     chef.add_recipe 'mongodb::10gen_repo'
     chef.add_recipe 'mongodb'
 
-    chef.cookbooks_path = ["cookbooks", "my_cookbooks"]
-
     if ENV['VAGRANT_DEBUG']
       chef.log_level = :debug
     end
@@ -53,6 +50,8 @@ Vagrant.configure('2') do |config|
     chef.json = {
       :mongodb => {
         :dbpath     => '/data',
+
+        # Turn on smallfiles to make the initial journal preallocation faster
         :smallfiles => true
       },
       :ebs => {

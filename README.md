@@ -5,6 +5,6 @@ vagrant-mongodb
     berks install -p cookbooks
 
     VAGRANT_DEBUG=1
-    vagrant up --provider=aws --no-provision && sleep 30 && vagrant provision && vagrant ssh
+    vagrant up --provider=aws --no-provision --no-parallel && sleep 30 && vagrant provision && vagrant ssh
 
     vagrant destroy -f
