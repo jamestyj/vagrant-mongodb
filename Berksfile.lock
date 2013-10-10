@@ -9,12 +9,17 @@
     "ebs": {
       "locked_version": "0.3.6",
       "git": "git://github.com/jamestyj/chef-ebs.git",
-      "ref": "b13830fdca338a56a897c47d15c01e97c932d788"
+      "ref": "d8db80483b65a8e04c33e8d5aeeb5eb8f058c1e8"
     },
     "mongodb": {
       "locked_version": "0.13.2",
       "git": "git://github.com/edelight/chef-mongodb.git",
       "ref": "baf6130fcebd3674ed67c601214addbcd167bb45"
+    },
+    "mosh": {
+      "locked_version": "0.3.0",
+      "git": "git://github.com/jtimberman/mosh-cookbook",
+      "ref": "36d71e960be7be16031ae7352261be40a17e0d98"
     },
     "yum": {
       "locked_version": "2.3.4"

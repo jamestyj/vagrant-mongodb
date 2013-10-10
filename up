@@ -1,5 +1,10 @@
 #!/bin/bash
 
+function usage() {
+  echo >&2 "Usage:"
+  echo >&2 "  ./up [OPTIONS]"
+}
+
 if vagrant status | grep -q 'not created'; then
   rm -f Berksfile.lock
   berks install -p cookbooks/
