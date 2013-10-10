@@ -1,0 +1,16 @@
+package 'htop'
+package 'dstat'
+package 'sysstat'
+
+package 'tmux'
+
+# package 'boost-devel'
+# package 'gcc'
+# package 'gcc-c++'
+# package 'libutempter-devel'
+# package 'ncurses'
+# package 'ncurses-devel'
+# package 'openssl-devel' 
+# package 'protobuf-compiler'
+# package 'protobuf-devel'
+# package 'zlib-devel'
