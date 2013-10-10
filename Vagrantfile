@@ -3,7 +3,6 @@ Vagrant.configure('2') do |config|
   config.vm.box_url = 'https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box'
 
   config.vm.provider :aws do |aws, override|
-
     # Workaround for "~/aws/keys/#{aws.region}/#{ENV['USER']}.pem", which for
     # some reason expands to an object instead of a string. E.g. the following
     # fails:
@@ -38,22 +37,35 @@ Vagrant.configure('2') do |config|
     # the initial run when doing `vagrant up` is still going to fail because
     # it's still using an existing SSH connection.
     config.vm.synced_folder '.', '/vagrant', :disabled => true
-
-    # We can also create and mount EBS volumes directly here [1], but we'll do
-    # it with Chef as that's more flexible.
-    # [1] http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/block-device-mapping-concepts.html
-    #
-    # aws.block_device_mapping = [
-    #   { 'DeviceName'              => '/dev/sdf',
-    #     'VirtualName'             => 'mongodb_data',
-    #     'Ebs.VolumeSize'          => 20,
-    #     'Ebs.DeleteOnTermination' => true
-    #   }
-    # ]
   end
 
-  # TODO Use http://clarkdave.net/2013/04/managing-ebs-volumes-with-chef/ as reference
   config.vm.provision 'chef_solo' do |chef|
+    chef.add_recipe 'ebs'
+    chef.add_recipe 'mongodb::10gen_repo'
     chef.add_recipe 'mongodb'
+
+    chef.cookbooks_path = ["cookbooks", "my_cookbooks"]
+
+    if ENV['VAGRANT_DEBUG']
+      chef.log_level = :debug
+    end
+
+    chef.json = {
+      :mongodb => {
+        :dbpath     => '/data',
+        :smallfiles => true
+      },
+      :ebs => {
+        :access_key => ENV['AWS_ACCESS_KEY'],
+        :secret_key => ENV['AWS_SECRET_KEY'],
+        :volumes => {
+          '/data' => {
+            :size          => 20,
+            :fstype        => 'ext4',
+            :mount_options => 'noatime,noexec'
+          }
+        }
+      }
+    }
   end
 end

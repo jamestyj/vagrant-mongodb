@@ -1,0 +1,14 @@
+- NOTE: `vagrant provision` will create new EBS volumes if the volume is not
+  mounted.
+- FIX: chef-solo takes some time to be available. sleep 15 sometimes
+  insufficient. Need to find a better solution.
+- TODO: Add docs.
+- FIX: Starting MongoDB for the first time is very slow as it's preallocating.
+  Why? This should be very fast on ext4.
+- Load unmodified cookbooks directly from tarball
+
+- Add htop, dstat, mosh, tmux
+- Add .mongohacker, gitprofile, vimrc
+- Pre-read EBS volume to boost performance
+- Provisioend iops
+- RAID
