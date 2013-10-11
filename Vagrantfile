@@ -14,7 +14,7 @@ Vagrant.configure('2') do |config|
     aws.region            = aws_region
 
     aws.keypair_name      = ENV['VAGRANT_AWS_KEYPAIR_NAME']  || ENV['USER']
-    aws.instance_type     = ENV['VAGRANT_AWS_INSTANCE_TYPE'] || 't1.micro'
+    aws.instance_type     = ENV['VAGRANT_AWS_INSTANCE_TYPE'] || 'm1.medium'
 
     # TODO Auto-create the 'MongoDB' security group, or at least document
     # manual steps. Inbound ports on 22 (SSH) and 27017 (MongoDB) should be
@@ -42,7 +42,7 @@ Vagrant.configure('2') do |config|
   end
 
   # See http://docs.mongodb.org/manual/administration/production-notes/ for details.
-  config.vm.provision 'chef_solo' do |chef|
+  config.vm.provision :chef_solo do |chef|
     chef.add_recipe 'utils'
     chef.add_recipe 'mosh'
     chef.add_recipe 'ebs'
@@ -63,30 +63,30 @@ Vagrant.configure('2') do |config|
       :ebs => {
         :access_key        => ENV['AWS_ACCESS_KEY'],
         :secret_key        => ENV['AWS_SECRET_KEY'],
-        :fstype            => 'ext4',
+        :fstype            => 'ext4',  # Or 'xfs'
         :no_boot_config    => true,
-        :md_read_ahead     => 32,  # 16KB
-        # :mdadm_chunk_size] => 256,
+        :md_read_ahead     => 32,  # Size in number of 512B sectors (16KB)
+        # :mdadm_chunk_size => 256,
       }
     }
 
     if ENV['VAGRANT_EBS_RAID']
       chef.json[:ebs][:raids] = {
         '/dev/md0' => {
-          :num_disks     => 2,
-          :disk_size     => 10,
-          :raid_level    => 0,
+          :num_disks     => 4,
+          :disk_size     => 10,  # Size in GB
+          :raid_level    => 10,
           :fstype        => chef.json[:ebs][:fstype],
           :mount_point   => '/data',
           :mount_options => 'noatime,noexec',
-          # :piops       => 2000,
-          # :uselvm      => true,
+          # :piops       => 2000,   # Provisioned IOPS
+          # :uselvm      => true
         }
       }
     else
       chef.json[:ebs][:volumes] = {
         '/data' => {
-          :size          => 20,
+          :size          => 20,  # Size in GB
           :fstype        => chef.json[:ebs][:fstype],
           :mount_options => 'noatime,noexec'
         }
