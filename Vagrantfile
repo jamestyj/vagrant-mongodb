@@ -84,13 +84,11 @@ Vagrant.configure('2') do |config|
         }
       }
     else
-      chef.json[:ebs][:raids] = {
-        :volumes => {
-          '/data' => {
-            :size          => 20,
-            :fstype        => chef.json[:ebs][:fstype],
-            :mount_options => 'noatime,noexec'
-          }
+      chef.json[:ebs][:volumes] = {
+        '/data' => {
+          :size          => 20,
+          :fstype        => chef.json[:ebs][:fstype],
+          :mount_options => 'noatime,noexec'
         }
       }
     end
