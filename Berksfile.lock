@@ -12,9 +12,9 @@
       "ref": "d8db80483b65a8e04c33e8d5aeeb5eb8f058c1e8"
     },
     "mongodb": {
-      "locked_version": "0.13.2",
+      "locked_version": "0.13.4",
       "git": "git://github.com/edelight/chef-mongodb.git",
-      "ref": "baf6130fcebd3674ed67c601214addbcd167bb45"
+      "ref": "29dcbaa1bce312ad8e1971c0d5a961a8b91e10c4"
     },
     "mosh": {
       "locked_version": "0.3.0",
@@ -26,6 +26,15 @@
     },
     "apt": {
       "locked_version": "2.2.0"
+    },
+    "python": {
+      "locked_version": "1.4.0"
+    },
+    "build-essential": {
+      "locked_version": "1.4.2"
+    },
+    "runit": {
+      "locked_version": "1.3.0"
     }
   }
 }
