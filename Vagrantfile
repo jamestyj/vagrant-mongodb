@@ -41,7 +41,8 @@ Vagrant.configure('2') do |config|
     config.vm.synced_folder '.', '/vagrant', :disabled => true
   end
 
-  # See http://docs.mongodb.org/manual/administration/production-notes/ for details.
+  # See http://docs.mongodb.org/manual/administration/production-notes/ for
+  # details.
   config.vm.provision :chef_solo do |chef|
     chef.add_recipe 'utils'
     chef.add_recipe 'mosh'
@@ -61,11 +62,11 @@ Vagrant.configure('2') do |config|
         :smallfiles => true      # Speed up initial journal preallocation
       },
       :ebs => {
-        :access_key        => ENV['AWS_ACCESS_KEY'],
-        :secret_key        => ENV['AWS_SECRET_KEY'],
-        :fstype            => 'ext4',  # Or 'xfs'
-        :no_boot_config    => true,
-        :md_read_ahead     => 32,  # Size in number of 512B sectors (16KB)
+        :access_key         => ENV['AWS_ACCESS_KEY'],
+        :secret_key         => ENV['AWS_SECRET_KEY'],
+        :fstype             => 'ext4',  # Or 'xfs'
+        :no_boot_config     => true,
+        :md_read_ahead      => 32,      # Size in number of 512B sectors (16KB)
         # :mdadm_chunk_size => 256,
       }
     }
@@ -74,12 +75,12 @@ Vagrant.configure('2') do |config|
       chef.json[:ebs][:raids] = {
         '/dev/md0' => {
           :num_disks     => 4,
-          :disk_size     => 10,  # Size in GB
+          :disk_size     => 10,    # Size in GB
           :raid_level    => 10,
           :fstype        => chef.json[:ebs][:fstype],
           :mount_point   => '/data',
           :mount_options => 'noatime,noexec',
-          # :piops       => 2000,   # Provisioned IOPS
+          # :piops       => 2000,  # Provisioned IOPS
           # :uselvm      => true
         }
       }
