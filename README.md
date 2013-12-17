@@ -57,6 +57,7 @@ about 5 mins.
 
      ```bash
      vagrant plugin install vagrant-aws
+     vagrant plugin install vagrant-omnibus
      ```
 
   1. Install [Berkshelf](http://berkshelf.com/). If you already have Ruby

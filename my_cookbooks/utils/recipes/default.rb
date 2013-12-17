@@ -7,13 +7,11 @@ package 'sysstat'
 package 'tmux'
 package 'tree'
 
-# Install MongoDB plugin for dstat
 execute 'install_dstat_with_mongodb_plugin' do
   command 'wget -P /usr/share/dstat/ https://raw.github.com/gianpaj/dstat/master/plugins/dstat_mongodb_cmds.py'
   not_if { FileTest.directory?('/usr/share/dstat/') }
 end
 
-# Install MongoHacker
 execute 'install_mongo_hacker' do
   command [
     'wget -P /tmp https://github.com/TylerBrock/mongo-hacker/archive/master.zip',
@@ -25,4 +23,8 @@ execute 'install_mongo_hacker' do
     'rm -rf /tmp/{mongo-hacker-master,master.zip}'
   ].join(' && ')
   not_if { ::File.exists?('/home/ec2-user/.mongorc.js') }
+end
+
+execute 'clean_up_vagrant_omnibus' do
+  command 'rm -f /home/ec2-user/install.sh'
 end

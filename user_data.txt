@@ -6,6 +6,3 @@ runcmd:
    # `vagrant provision` works fine.
   - echo 'Defaults:ec2-user !requiretty' > /etc/sudoers.d/888-vagrant-cloud-init-requiretty
   - chmod 440                              /etc/sudoers.d/888-vagrant-cloud-init-requiretty
-
-  # Install Chef
-  - wget -O- https://opscode.com/chef/install.sh | bash

@@ -2,6 +2,8 @@ Vagrant.configure('2') do |config|
   config.vm.box     = 'dummy'
   config.vm.box_url = 'https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box'
 
+  config.omnibus.chef_version = :latest
+
   config.vm.provider :aws do |aws, override|
     # Workaround for "~/aws/keys/#{aws.region}/#{ENV['USER']}.pem", which for
     # some reason expands to an object instead of a string. E.g. the following
