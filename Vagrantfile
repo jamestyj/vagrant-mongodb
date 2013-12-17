@@ -27,8 +27,8 @@ Vagrant.configure('2') do |config|
     # allowed.
     aws.security_groups = [ 'MongoDB' ]
 
-    # List of latest Amazon Linux AMIs (eg. amzn-ami-pv-2013.09.0.x86_64-ebs).
-    # Add the corresponding one for your region if neccessary.
+    # List of Amazon Linux AMIs (e.g. amzn-ami-pv-2013.09.0.x86_64-ebs).
+    # Add the one for your region if it is missing.
     aws.region_config 'ap-southeast-1', :ami => 'ami-14f2b946'
     aws.region_config 'eu-west-1',      :ami => 'ami-149f7863'
     aws.region_config 'us-east-1',      :ami => 'ami-35792c5c'
