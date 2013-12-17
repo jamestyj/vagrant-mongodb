@@ -50,9 +50,21 @@ about 5 mins.
 
 ### 2.1  Initial setup
 
-  1. [Install Vagrant] (http://docs.vagrantup.com/v2/installation/).
+  1. [Download and install Vagrant](http://www.vagrantup.com/downloads). Use
+     the latest stable release (e.g. version 1.4 and above).
 
-  1. [Install Berkshelf] (http://berkshelf.com/).
+  1. Install the required Vagrant plugins by running:
+
+     ```bash
+     vagrant plugin install vagrant-aws
+     ```
+
+  1. Install [Berkshelf](http://berkshelf.com/). If you already have Ruby
+     installed (which you should), simply run:
+
+     ```bash
+     sudo gem install berkshelf
+     ```
 
   1. Add your AWS access and secret keys as environment variables by adding the
      following to your `~/.bash_profile` or `~/.bashrc`. If you've used the AWS
