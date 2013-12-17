@@ -211,34 +211,10 @@ future.
 
 ## 3  Known issues
 
-  1. There's an annoying race condition that causes the following error message
-     to appear in red sometimes:
-
-     ```
-     An error occurred while executing multiple actions in parallel.
-     Any errors that occurred are shown below.
-
-     An error occurred while executing the action on the 'default'
-     machine. Please handle this error then try again:
-
-     The following SSH command responded with a non-zero exit status.
-     Vagrant assumes that this means the command failed!
-
-     mkdir -p '/tmp/vagrant-chef-1/chef-solo-1/cookbooks'
-
-     Stdout from the command:
-
-
-
-     Stderr from the command:
-
-     sudo: sorry, you must have a tty to run sudo
-     ```
-
-     It's harmless, so just ignore it.
-
-  1. Amazon EBS volumes are not deleted when the EC2 instance is terminated, so
-     you'll need to do this manually.
+  1. The Amazon EBS volumes are not deleted when the EC2 instance is
+     terminated, so you'll need to do this manually. The enhancement request is
+     tracked in [Github Issues]
+     (https://github.com/jamestyj/vagrant-mongodb/issues/1).
 
 ## 4 Contributions and feedback
 
