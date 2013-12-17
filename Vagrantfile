@@ -22,6 +22,10 @@ Vagrant.configure('2') do |config|
     aws.keypair_name      = ENV['VAGRANT_AWS_KEYPAIR_NAME']  || ENV['USER']
     aws.instance_type     = ENV['VAGRANT_AWS_INSTANCE_TYPE'] || 'm1.medium'
 
+    # See http://aws.amazon.com/ec2/instance-types/#instance-details the
+    # instance types that support this.
+    aws.ebs_optimized     = false
+
     # TODO Auto-create the 'MongoDB' security group, or at least document
     # manual steps. Inbound ports on 22 (SSH) and 27017 (MongoDB) should be
     # allowed.
