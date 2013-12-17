@@ -4,6 +4,10 @@ Vagrant.configure('2') do |config|
 
   config.omnibus.chef_version = :latest
 
+  # Workaround for "sudo: sorry, you must have a tty to run sudo" error. See
+  # https://github.com/mitchellh/vagrant/issues/1482 for details.
+  config.ssh.pty = true
+
   config.vm.provider :aws do |aws, override|
     # Workaround for "~/aws/keys/#{aws.region}/#{ENV['USER']}.pem", which for
     # some reason expands to an object instead of a string. E.g. the following
@@ -29,18 +33,9 @@ Vagrant.configure('2') do |config|
     aws.region_config 'eu-west-1',      :ami => 'ami-149f7863'
     aws.region_config 'us-east-1',      :ami => 'ami-35792c5c'
 
-    # Workaround for https://github.com/mitchellh/vagrant/issues/1482.
-    aws.user_data = File.read 'user_data.txt'
-
     override.ssh.username         = 'ec2-user'
     override.ssh.private_key_path = ENV['VAGRANT_SSH_PRIVATE_KEY_PATH'] ||
                                     "~/aws/keys/#{aws_region}/#{ENV['USER']}.pem"
-
-    # Disable rsynced folders to avoid the "sudo: sorry, you must have a tty to
-    # run sudo" error. See https://github.com/mitchellh/vagrant/issues/1482 for
-    # details. Note that even though we have the workaround in user_data.txt,
-    # the initial run when doing `vagrant up` is still going to fail.
-    config.vm.synced_folder '.', '/vagrant', :disabled => true
   end
 
   # See http://docs.mongodb.org/manual/administration/production-notes/ for

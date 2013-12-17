@@ -265,19 +265,7 @@ will be silently ignored.
 [default]  -- AMI: ami-149f7863
 [default]  -- Region: eu-west-1
 [default]  -- Keypair: jamestyj
-[default]  -- User Data: yes
 [default]  -- Security Groups: ["MongoDB"]
-[default]  -- User Data: #cloud-config
-runcmd:
-   # Workaround for https://github.com/mitchellh/vagrant/issues/1482, which we
-   # need for Chef (or Puppet) to run. It still doesn't fix the synced_folders
-   # (with rsync) on the initial `vagrant up` run though, though subsequent
-   # `vagrant provision` works fine.
-  - echo 'Defaults:ec2-user !requiretty' > /etc/sudoers.d/888-vagrant-cloud-init-requiretty
-  - chmod 440                              /etc/sudoers.d/888-vagrant-cloud-init-requiretty
-
-  # Install Chef
-  - wget -O- https://opscode.com/chef/install.sh | bash
 [default]  -- Block Device Mapping: []
 [default]  -- Terminate On Shutdown: false
 [default] Waiting for instance to become "ready"...

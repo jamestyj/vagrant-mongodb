@@ -9,8 +9,7 @@ if vagrant status | grep -q 'not created'; then
   rm -f Berksfile.lock
   berks install -p cookbooks/
 
-  vagrant up --provider=aws --no-provision
+  VAGRANT_EBS_RAID=1 vagrant up --provider=aws
 fi
 
-VAGRANT_DEBUG=1 VAGRANT_EBS_RAID=1 vagrant provision
 vagrant ssh
