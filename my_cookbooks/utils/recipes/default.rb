@@ -28,3 +28,10 @@ end
 execute 'clean_up_vagrant_omnibus' do
   command 'rm -f /home/ec2-user/install.sh'
 end
+
+cookbook_file 'public_ip' do
+  path  '/home/ec2-user/public_ip'
+  owner 'ec2-user'
+  group 'ec2-user'
+  mode  '0755'
+end
