@@ -7,7 +7,6 @@ function usage() {
 
 if vagrant status | grep -q 'not created'; then
   start_time=$(date +%s)
-  rm -f Berksfile.lock
   berks install -p cookbooks/
   stop_time=$(date +%s)
   echo "** Berkshelf took $(($stop_time - $start_time))s"
