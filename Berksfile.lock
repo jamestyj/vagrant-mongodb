@@ -12,9 +12,9 @@
       "ref": "98030d8d26023d6561039f0e0d3e7d1597b3e1ac"
     },
     "mongodb": {
-      "locked_version": "0.14.1",
+      "locked_version": "0.14.4",
       "git": "git://github.com/edelight/chef-mongodb.git",
-      "ref": "bfee538a29be5e319b335b22976a07d27028ae30"
+      "ref": "2ea5fc251769de185f2bc003538797b84cf09441"
     },
     "mosh": {
       "locked_version": "0.3.0",
