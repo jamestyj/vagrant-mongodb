@@ -113,6 +113,15 @@ variables. You can refer to the Vagrant configuration file ([Vagrantfile]
   1. `VAGRANT_EBS_RAID` - Use additional EBS volumes to create a RAID volume.
      Defaults to RAID 10 (if enabled at all).
 
+  1. `VAGRANT_AWS_TAG_NAME` - EC2 instance tag 'Name'. Defaults to 'MongoDB
+     instance (launched by vagrant-mongodb)'.
+
+  1. `VAGRANT_AWS_TAG_OWNER` - EC2 instance tag 'owner'. Defaults to current
+     user.
+
+  1. `VAGRANT_AWS_TAG_EXPIRE` - EC2 instance tag 'expire-on', in YYYY-MM-DD
+     format. Defaults to 30 days from now. No effect on its own, but can be
+     used by clean-up scripts.
 
 #### 2.2.2 Modifying the Vagrant config file
 

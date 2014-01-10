@@ -22,6 +22,12 @@ Vagrant.configure('2') do |config|
     aws.keypair_name      = ENV['VAGRANT_AWS_KEYPAIR_NAME']  || ENV['USER']
     aws.instance_type     = ENV['VAGRANT_AWS_INSTANCE_TYPE'] || 'm1.medium'
 
+    aws.tags = {
+      'Name'      => ENV['VAGRANT_AWS_TAG_NAME']   || 'MongoDB instance (launched by vagrant-mongodb)',
+      'owner'     => ENV['VAGRANT_AWS_TAG_OWNER']  || ENV['USER'],
+      'expire-on' => ENV['VAGRANT_AWS_TAG_EXPIRE'] || (Date.today + 30).to_s
+    }
+
     # See http://aws.amazon.com/ec2/instance-types/#instance-details the
     # instance types that support this.
     aws.ebs_optimized     = false
