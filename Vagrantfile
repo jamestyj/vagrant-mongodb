@@ -37,11 +37,11 @@ Vagrant.configure('2') do |config|
     # allowed.
     aws.security_groups = [ 'MongoDB' ]
 
-    # List of Amazon Linux AMIs (e.g. amzn-ami-pv-2013.09.0.x86_64-ebs).
+    # List of Amazon Linux AMIs (e.g. amzn-ami-pv-2013.09.2.x86_64-ebs).
     # Add the one for your region if it is missing.
     aws.region_config 'ap-southeast-1', :ami => 'ami-14f2b946'
-    aws.region_config 'eu-west-1',      :ami => 'ami-149f7863'
-    aws.region_config 'us-east-1',      :ami => 'ami-35792c5c'
+    aws.region_config 'eu-west-1',      :ami => 'ami-5256b825'
+    aws.region_config 'us-east-1',      :ami => 'ami-bba18dd2'
 
     override.ssh.username         = 'ec2-user'
     override.ssh.private_key_path = ENV['VAGRANT_SSH_PRIVATE_KEY_PATH'] ||
