@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+
+require 'aws-sdk'
+
+puts "AMI NAME                          AMI ID        REGION"
+
+amis = {}
+AWS.regions.each do |reg|
+  amis[reg.name] = {}
+  reg.ec2.images.with_owner('amazon').each do |ami|
+    if ami.name =~ /^amzn-ami-pv-201(.+)x86_64-ebs/ &&
+        (amis[reg.name][:name].nil? || ami.name > amis[reg.name][:name])
+      amis[reg.name] = { id: ami.id, name: ami.name }
+    end
+  end
+  puts "#{amis[reg.name][:name]}  #{amis[reg.name][:id]}  #{reg.name}"
+end
+
+puts
+
+amis.keys.sort.each do |reg|
+  printf "aws.region_config %-17s :ami => '%s'\n", "'#{reg}',", amis[reg][:id]
+end
