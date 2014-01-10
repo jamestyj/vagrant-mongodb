@@ -1,10 +1,5 @@
 #!/bin/bash -e
 
-function usage() {
-  echo >&2 "Usage:"
-  echo >&2 "  ./up [OPTIONS]"
-}
-
 if vagrant status | grep -q 'not created'; then
   start_time=$(date +%s)
   VAGRANT_EBS_RAID=1 vagrant up --provider=aws
