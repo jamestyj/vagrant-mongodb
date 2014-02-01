@@ -21,15 +21,20 @@ Vagrant.configure('2') do |config|
     aws.region            = aws_region
 
     aws.keypair_name      = ENV['VAGRANT_AWS_KEYPAIR_NAME']  || ENV['USER']
+
+    # See http://aws.amazon.com/ec2/instance-types/ for list of Amazon EC2
+    # instance types.
     aws.instance_type     = ENV['VAGRANT_AWS_INSTANCE_TYPE'] || 'm1.medium'
 
+    # Tag the EC2 instance for easier management and clean-up, especially on
+    # shared accounts.
     aws.tags = {
-      'Name'      => ENV['VAGRANT_AWS_TAG_NAME']   || 'MongoDB instance (launched by vagrant-mongodb)',
+      'Name'      => ENV['VAGRANT_AWS_TAG_NAME']   || 'MongoDB (started by vagrant-mongodb)',
       'owner'     => ENV['VAGRANT_AWS_TAG_OWNER']  || ENV['USER'],
       'expire-on' => ENV['VAGRANT_AWS_TAG_EXPIRE'] || (Date.today + 30).to_s
     }
 
-    # See http://aws.amazon.com/ec2/instance-types/#instance-details the
+    # See http://aws.amazon.com/ec2/instance-types/#instance-details for the
     # instance types that support this.
     aws.ebs_optimized     = false
 
