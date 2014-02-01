@@ -1,10 +1,23 @@
 #!/bin/bash -e
 
+function log() {
+  local msg=$1
+  local opts=$2
+  local time=`date +%H:%M:%S`
+  echo $opts "$time $msg"
+}
+
+log "Checking for existing instances..."
+
 if vagrant status | grep -q 'not created'; then
+  log "No instance found, creating new one..."
   start_time=$(date +%s)
-  VAGRANT_EBS_RAID=1 vagrant up --provider=aws
+  VAGRANT_AWS_INSTANCE_TYPE=t1.micro vagrant up --provider=aws
   stop_time=$(date +%s)
-  echo "** Vagrant took $(($stop_time - $start_time))s"
+  log "Vagrant took $(($stop_time - $start_time))s"
+else
+  log "Found existing instance"
 fi
 
+log "SSH-ing into the instance..."
 vagrant ssh
