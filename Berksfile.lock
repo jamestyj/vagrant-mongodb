@@ -3,6 +3,9 @@
     "aws": {
       "locked_version": "0.101.6"
     },
+    "chef-solo-search": {
+      "locked_version": "0.5.1"
+    },
     "delayed_evaluator": {
       "locked_version": "0.2.0"
     },
