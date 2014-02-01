@@ -65,7 +65,6 @@ check_region "$region"
 
 log "Running Berkshelf to install Chef cookbook dependencies..."
 berks install -p cookbooks/
-echo
 
 if [ $check_existing == true ]; then
   log "Checking for existing instances..."
