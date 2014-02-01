@@ -2,7 +2,9 @@ Vagrant.configure('2') do |config|
   config.vm.box     = 'dummy'
   config.vm.box_url = 'https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box'
 
-  config.omnibus.chef_version = :latest
+  if ENV['VAGRANT_OMNIBUS']
+    config.omnibus.chef_version = :latest
+  end
 
   # Workaround for "sudo: sorry, you must have a tty to run sudo" error. See
   # https://github.com/mitchellh/vagrant/issues/1482 for details.
@@ -58,55 +60,104 @@ Vagrant.configure('2') do |config|
                                     "~/aws/keys/#{aws_region}/#{ENV['USER']}.pem"
   end
 
-  # See http://docs.mongodb.org/manual/administration/production-notes/ for
-  # details.
-  config.vm.provision :chef_solo do |chef|
-    chef.add_recipe 'utils'
-    chef.add_recipe 'mosh'
-    chef.add_recipe 'ebs'
-    chef.add_recipe 'mongodb::10gen_repo'
-    chef.add_recipe 'mongodb'
+  config.vm.define 'mongodb-rs1-data1' do |mongo|
+    config.vm.provision :chef_solo do |chef|
+      chef.add_recipe 'chef-solo-search'
+      chef.add_recipe 'utils'
+      chef.add_recipe 'mosh'
+      chef.add_recipe 'ebs'
+      chef.add_recipe 'mongodb::10gen_repo'
+      chef.add_recipe 'mongodb'
+      chef.add_recipe 'mongodb::replicaset'
 
-    if ENV['VAGRANT_DEBUG']
-      chef.log_level = :debug
-    end
+      chef.cookbooks_path = ['cookbooks', 'my_cookbooks']
+      chef.data_bag_path  = ['data_bags']
+      chef.roles_path     = ['roles']
 
-    chef.json = {
-      :mongodb => {
-        :dbpath     => '/data',
-        :smallfiles => true      # Speed up initial journal preallocation
-      },
-      :ebs => {
-        :access_key         => ENV['AWS_ACCESS_KEY'],
-        :secret_key         => ENV['AWS_SECRET_KEY'],
-        :fstype             => 'ext4',  # Or 'xfs'
-        :no_boot_config     => true,
-        :md_read_ahead      => 32,      # Size in number of 512B sectors (16KB)
-        # :mdadm_chunk_size => 256,
-      }
-    }
-
-    if ENV['VAGRANT_EBS_RAID']
-      chef.json[:ebs][:raids] = {
-        '/dev/md0' => {
-          :num_disks     => 4,
-          :disk_size     => 10,    # Size in GB
-          :raid_level    => 10,
-          :fstype        => chef.json[:ebs][:fstype],
-          :mount_point   => '/data',
-          :mount_options => 'noatime,noexec',
-          # :piops       => 2000,  # Provisioned IOPS
-          # :uselvm      => true
+      chef.json = {
+        mongodb: {
+          config:          { replSet: 'rs1' },
+          cluster_name:    'rs1',
+          shard_name:      'rs1',
+          dbpath:          '/data',
+          replicaset_name: 'rs1',
+          smallfiles:      true
+        },
+        ebs: {
+          access_key: ENV['AWS_ACCESS_KEY'],
+          secret_key: ENV['AWS_SECRET_KEY']
         }
       }
-    else
       chef.json[:ebs][:volumes] = {
         '/data' => {
-          :size          => 20,  # Size in GB
-          :fstype        => chef.json[:ebs][:fstype],
-          :mount_options => 'noatime,noexec'
+          size:          20,
+          fstype:        'ext4',
+          mount_options: 'noatime,noexec'
         }
       }
     end
   end
+
+  config.vm.define 'mongodb-rs1-data2' do |mongo|
+    config.vm.provision :chef_solo do |chef|
+      chef.add_recipe 'utils'
+      chef.add_recipe 'mosh'
+      chef.add_recipe 'ebs'
+      chef.add_recipe 'mongodb::10gen_repo'
+      chef.add_recipe 'mongodb'
+      chef.add_recipe 'mongodb::replicaset'
+
+      chef.cookbooks_path = ['cookbooks', 'my_cookbooks']
+      chef.data_bag_path  = ['data_bags']
+      chef.roles_path     = ['roles']
+
+      chef.json = {
+        mongodb: {
+          config:          { replSet: 'rs1' },
+          cluster_name:    'rs1',
+          shard_name:      'rs1',
+          dbpath:          '/data',
+          replicaset_name: 'rs1',
+          smallfiles:      true
+        },
+        ebs: {
+          access_key: ENV['AWS_ACCESS_KEY'],
+          secret_key: ENV['AWS_SECRET_KEY']
+        }
+      }
+      chef.json[:ebs][:volumes] = {
+        '/data' => {
+          size:          20,
+          fstype:        'ext4',
+          mount_options: 'noatime,noexec'
+        }
+      }
+    end
+  end
+
+  config.vm.define 'mongodb-rs1-arb' do |mongo|
+    config.vm.provision :chef_solo do |chef|
+      chef.add_recipe 'utils'
+      chef.add_recipe 'mosh'
+      chef.add_recipe 'ebs'
+      chef.add_recipe 'mongodb::10gen_repo'
+      chef.add_recipe 'mongodb'
+      chef.add_recipe 'mongodb::replicaset'
+
+      chef.cookbooks_path = ['cookbooks', 'my_cookbooks']
+      chef.data_bag_path  = ['data_bags']
+      chef.roles_path     = ['roles']
+
+      chef.json = {
+        mongodb: {
+          config:               { replSet: 'rs1' },
+          shard_name:           'rs1',
+          cluster_name:         'rs1',
+          replica_arbiter_only: true,
+          replicaset_name:      'rs1'
+        }
+      }
+    end
+  end
+
 end
