@@ -1,5 +1,23 @@
 #!/bin/bash -e
 
+function usage() {
+  echo "Usage: ./up [OPTIONS] "
+  echo
+  echo "Creates MongoDB instances with Vagrant and Chef. See"
+  echo "https://github.com/jamestyj/vagrant-mongodb for details."
+  echo
+  echo "Options:"
+  echo "  --region REGION      The Amazon EC2 region to use. Valid options are:"
+  echo "                       ap-northeast-1, ap-southeast-1, ap-southeast-2,"
+  echo "                       eu-west-1, sa-east-1, us-east-1, us-west-1, us-west-2."
+  echo "                       Defaults to eu-west-1."
+  echo "  --instance_type TYPE The Amazon EC2 instance type to use. See "
+  echo "                       http://aws.amazon.com/ec2/instance-types/ for the full"
+  echo "                       list. Defaults to t1.micro."
+  echo "  --skip_check         Skip check for existing instance(s)."
+  echo "  --help               Display this help and exit."
+}
+
 function log() {
   local msg=$1
   local opts=$2
@@ -7,17 +25,58 @@ function log() {
   echo $opts "$time $msg"
 }
 
-log "Running Berkshelf to install Chef cookbook dependencies..."
-berks install -p cookbooks/
+function check_region() {
+  for valid_region in ap-northeast-1 ap-southeast-1 ap-southeast-2 eu-west-1 \
+      sa-east-1 us-east-1 us-west-1 us-west-2; do
+    [ "$1" == "$valid_region" ] && return
+  done
+  log "Invalid region: $1"
+}
 
-if vagrant status | grep -q 'not created'; then
-  log "No instance(s) found, creating..."
+function run_vagrant() {
+  log "Region:        $region"
+  log "Instance type: $instance_type"
   start_time=$(date +%s)
-  VAGRANT_AWS_INSTANCE_TYPE=t1.micro vagrant up --provider=aws
+
+  VAGRANT_OMNIBUS=true \
+  VAGRANT_AWS_REGION="$region" \
+  VAGRANT_AWS_INSTANCE_TYPE="$instance_type" \
+    vagrant up --provider=aws
+
   stop_time=$(date +%s)
   log "Vagrant took $(($stop_time - $start_time))s"
+}
+
+region=eu-west-1
+instance_type=t1.micro
+check_existing=true
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --region)        shift; region="$1";;
+    --instance_type) shift; instance_type="$1";;
+    --skip_check)    check_existing=false;;
+    -h|--help)       usage; exit 1;;
+    *) break;;
+  esac
+  shift
+done
+
+check_region "$region"
+
+log "Running Berkshelf to install Chef cookbook dependencies..."
+berks install -p cookbooks/
+echo
+
+if [ $check_existing == true ]; then
+  log "Checking for existing instances..."
+  if vagrant status | grep -q 'not created'; then
+    log "No instance(s) found, creating..."
+    run_vagrant
+  else
+    log "Found existing instance(s)"
+  fi
 else
-  log "Found existing instance"
+  run_vagrant
 fi
 
 log "SSH-ing into the instance..."
