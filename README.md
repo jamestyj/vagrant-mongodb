@@ -57,7 +57,6 @@ about 5 mins.
 
      ```bash
      vagrant plugin install vagrant-aws
-     vagrant plugin install vagrant-berkshelf
      vagrant plugin install vagrant-omnibus
      ```
 
@@ -199,14 +198,6 @@ typically takes about 5 minutes so isn't really a problem.
 Berkshelf is used to manage Chef cookbooks and dependencies. See [Berksfile]
 (Berksfile) for the list of Chef cookbooks that are pulled from the OpsCode
 cookbooks repository, or directly from the specified Git repositories.
-
-We use Berkshelf to download latest version of the cookbooks (or a specific
-version if a version string is given) with the following commands:
-
-```bash
-rm -f Berksfile.lock
-berks install -p cookbooks/
-```
 
 Note that everything under `cookbooks/` will be removed and replaced with the
 specified cookbooks.

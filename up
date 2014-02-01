@@ -7,10 +7,11 @@ function log() {
   echo $opts "$time $msg"
 }
 
-log "Checking for existing instances..."
+log "Running Berkshelf to install Chef cookbook dependencies..."
+berks install -p cookbooks/
 
 if vagrant status | grep -q 'not created'; then
-  log "No instance found, creating new one..."
+  log "No instance(s) found, creating..."
   start_time=$(date +%s)
   VAGRANT_AWS_INSTANCE_TYPE=t1.micro vagrant up --provider=aws
   stop_time=$(date +%s)
