@@ -34,8 +34,6 @@ function check_region() {
 }
 
 function run_vagrant() {
-  log "Region:        $region"
-  log "Instance type: $instance_type"
   start_time=$(date +%s)
 
   VAGRANT_OMNIBUS=true \
