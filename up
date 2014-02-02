@@ -44,6 +44,7 @@ function run_vagrant() {
 
   start_time=$(date +%s)
 
+  VAGRANT_FIRST_RUN=true \
   VAGRANT_OMNIBUS=true \
   VAGRANT_AWS_REGION="$region" \
   VAGRANT_AWS_INSTANCE_TYPE="$instance_type" \
@@ -127,5 +128,5 @@ if [ $provision_only == false ]; then
 fi
 
 if [ $data_bags_only == false ]; then
-  VAGRANT_REPLICASET=1 vagrant provision
+  vagrant provision
 fi

@@ -69,9 +69,7 @@ Vagrant.configure('2') do |config|
     chef.add_recipe 'mongodb'
 
     # Don't include on the first run, as we need to get and distribute the hostnames first.
-    if ENV['VAGRANT_REPLICASET']
-      chef.add_recipe 'mongodb::replicaset'
-    end
+    chef.add_recipe 'mongodb::replicaset' unless ENV['VAGRANT_FIRST_RUN']
 
     chef.cookbooks_path = ['cookbooks', 'my_cookbooks']
     chef.data_bags_path = 'data_bags'
@@ -79,7 +77,7 @@ Vagrant.configure('2') do |config|
       mongodb: {
         cluster_name:    'cluster1',
         shard_name:      'rs1',
-        # replicaset_name: 'rs1',
+        replicaset_name: 'rs1',
         dbpath:          '/data',
         smallfiles:      true
       },
@@ -113,7 +111,7 @@ Vagrant.configure('2') do |config|
   config.vm.define "mongodb-cfg-1" do |mongo|
     config.vm.provision :chef_solo do |chef|
       chef.add_recipe 'chef-solo-search'
-      chef.add_recipe 'mongodb::configserver'
+      chef.add_recipe 'mongodb::configserver' unless ENV['VAGRANT_FIRST_RUN']
       chef.cookbooks_path = ['cookbooks', 'my_cookbooks']
       chef.data_bags_path = 'data_bags'
       chef.json = {
@@ -131,7 +129,7 @@ Vagrant.configure('2') do |config|
   config.vm.define "mongodb-mongos-1" do |mongo|
     config.vm.provision :chef_solo do |chef|
       chef.add_recipe 'chef-solo-search'
-      chef.add_recipe 'mongodb::mongos'
+      chef.add_recipe 'mongodb::mongos' unless ENV['VAGRANT_FIRST_RUN']
       chef.cookbooks_path = ['cookbooks', 'my_cookbooks']
       chef.data_bags_path = 'data_bags'
       chef.json = {
