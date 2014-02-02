@@ -1,6 +1,6 @@
 {
   "id":   "<FQDN>",
-  "name": "<NAME>",
+  "name": "<FQDN>",
   "automatic": {
     "hostname": "<HOSTNAME>",
     "os":       "centos"
