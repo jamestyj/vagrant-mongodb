@@ -1,0 +1,24 @@
+{
+  "id":   "<FQDN>",
+  "name": "<FQDN>",
+  "automatic": {
+    "hostname": "<HOSTNAME>",
+    "os":       "centos"
+  },
+  "default": {
+    "fqdn": "<FQDN>",
+    "mongodb": {
+      "cluster_name": "cluster1",
+      "is_configserver": true,
+      "config": {
+        "port": 27019
+      }
+    }
+  },
+  "chef_type": "node",
+  "normal": {},
+  "chef_environment": "_default",
+  "json_class": "Chef::Node",
+  "override": {},
+  "run_list": []
+}

@@ -39,6 +39,9 @@ function check_region() {
 }
 
 function run_vagrant() {
+  log "Removing data_bags..."
+  rm -f data_bags/node/*
+
   start_time=$(date +%s)
 
   VAGRANT_OMNIBUS=true \
@@ -62,13 +65,17 @@ function generate_data_bags() {
       "
       fqdn=`vagrant ssh $instance -c "hostname -f" | grep "^ip"`
       # Remove trailing newline
-      fqdn="${fqdn%"${fqdn##*[![:space:]]}"}"
+      fqdn="${fqdn%"${fqdn##*[![:space:]]}"}" #"
       hostname=`echo $fqdn | cut -d'.' -f1`
+
+      in_file="data"
+      [[ "$instance" =~ cfg ]]    && in_file="config"
+      [[ "$instance" =~ mongos ]] && in_file="mongos"
 
       sed -e "s/<FQDN>/$fqdn/" \
           -e "s/<HOSTNAME>/$hostname/" \
           -e "s/<SET_NAME>/$set_name/" \
-          data_bags/mongodb.json.template > $out_file
+          data_bags/mongodb-$in_file.json.template > $out_file
     fi
   done
 }

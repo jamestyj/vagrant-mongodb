@@ -17,7 +17,7 @@
     "mongodb": {
       "locked_version": "0.14.6",
       "git": "git://github.com/jamestyj/chef-mongodb.git",
-      "ref": "fcec0541da26d69560d73b7b81c48107a96c8c2c"
+      "ref": "1531cbbc15c474d6e72f5f4794d5e8c55339b7ea"
     },
     "mosh": {
       "locked_version": "0.3.0",

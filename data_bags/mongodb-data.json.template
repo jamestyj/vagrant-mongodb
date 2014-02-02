@@ -1,19 +1,14 @@
 {
   "id":   "<FQDN>",
   "name": "<FQDN>",
-  "chef_environment": "_default",
-  "json_class": "Chef::Node",
   "automatic": {
     "hostname": "<HOSTNAME>",
-    "os": "centos"
+    "os":       "centos"
   },
-  "normal": {
-  },
-  "chef_type": "node",
   "default": {
     "fqdn": "<FQDN>",
     "mongodb": {
-      "cluster_name": "<SET_NAME>",
+      "cluster_name": "cluster1",
       "shard_name":   "<SET_NAME>",
       "is_replicaset": true,
       "port": 27017,
@@ -21,11 +16,16 @@
       "replica_priority": 1,
       "replica_slave_delay": 0,
       "replica_tags": {},
-      "replica_votes": 1
+      "replica_votes": 1,
+      "config": {
+        "port": 27019
+      }
     }
   },
-  "override": {
-  },
-  "run_list": [
-  ]
+  "chef_type": "node",
+  "normal": {},
+  "chef_environment": "_default",
+  "json_class": "Chef::Node",
+  "override": {},
+  "run_list": []
 }

@@ -58,9 +58,13 @@ Vagrant.configure('2') do |config|
 
   def mongodb_base_config(chef)
     chef.add_recipe 'chef-solo-search'
-    chef.add_recipe 'utils'
-    chef.add_recipe 'mosh'
-    chef.add_recipe 'ebs'
+
+    unless ENV['VAGRANT_MINIMAL']
+      chef.add_recipe 'utils'
+      chef.add_recipe 'mosh'
+      chef.add_recipe 'ebs'
+    end
+
     chef.add_recipe 'mongodb::10gen_repo'
     chef.add_recipe 'mongodb'
 
@@ -73,9 +77,9 @@ Vagrant.configure('2') do |config|
     chef.data_bags_path = 'data_bags'
     chef.json = {
       mongodb: {
-        cluster_name:    'rs1',
+        cluster_name:    'cluster1',
         shard_name:      'rs1',
-        replicaset_name: 'rs1',
+        # replicaset_name: 'rs1',
         dbpath:          '/data',
         smallfiles:      true
       },
@@ -84,24 +88,58 @@ Vagrant.configure('2') do |config|
         secret_key: ENV['AWS_SECRET_KEY']
       }
     }
-    chef.json[:ebs][:volumes] = {
-      '/data' => {
-        size:          20,
-        fstype:        'ext4',
-        mount_options: 'noatime,noexec'
-      }
-    }
-  end
 
-  def mongodb_provision(config)
-    config.vm.provision :chef_solo do |chef|
-      mongodb_base_config(chef)
+    unless ENV['VAGRANT_MINIMAL']
+      chef.json[:ebs][:volumes] = {
+        '/data' => {
+          size:          20,
+          fstype:        'ext4',
+          mount_options: 'noatime,noexec'
+        }
+      }
     end
   end
 
+  # mongod
   for i in 1..3
     config.vm.define "mongodb-rs1-#{i}" do |mongo|
-      mongodb_provision(config)
+      config.vm.provision :chef_solo do |chef|
+        mongodb_base_config(chef)
+      end
+    end
+  end
+
+  # config server
+  config.vm.define "mongodb-cfg-1" do |mongo|
+    config.vm.provision :chef_solo do |chef|
+      chef.add_recipe 'chef-solo-search'
+      chef.add_recipe 'mongodb::configserver'
+      chef.cookbooks_path = ['cookbooks', 'my_cookbooks']
+      chef.data_bags_path = 'data_bags'
+      chef.json = {
+        mongodb: {
+          cluster_name: 'cluster1',
+          dbpath:       '/data/configdb',
+          port:         27019,
+          smallfiles:   true
+        }
+      }
+    end
+  end
+
+  # mongos
+  config.vm.define "mongodb-mongos-1" do |mongo|
+    config.vm.provision :chef_solo do |chef|
+      chef.add_recipe 'chef-solo-search'
+      chef.add_recipe 'mongodb::mongos'
+      chef.cookbooks_path = ['cookbooks', 'my_cookbooks']
+      chef.data_bags_path = 'data_bags'
+      chef.json = {
+        mongodb: {
+          cluster_name: 'cluster1',
+          port:         27017
+        }
+      }
     end
   end
 end
