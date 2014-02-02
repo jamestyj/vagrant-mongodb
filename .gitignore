@@ -1,4 +1,4 @@
 .vagrant/
 cookbooks/
-data_bags/nodes
+data_bags/node
 .DS_Store
