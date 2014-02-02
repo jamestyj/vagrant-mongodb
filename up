@@ -68,6 +68,7 @@ function run_vagrant() {
   log "Removing data_bags..."
   rm -f data_bags/node/*
 
+  log "Running 'vagrant up'..."
   start_time=$(date +%s)
 
   VAGRANT_FIRST_RUN=true \
@@ -84,7 +85,7 @@ function generate_data_bags() {
   set_name=$1
   start_time=$(date +%s)
 
-  log "Regenerating data bags with hostnames..."
+  log "Generating data bags..."
   mkdir -p data_bags/node/
   rm -f    data_bags/node/*
   for instance in `vagrant status | grep "running"`; do
@@ -116,7 +117,7 @@ region=eu-west-1
 instance_type=t1.micro
 data_bags_only=false
 provision_only=false
-skip_check=true
+skip_check=false
 skip_create=false
 nodes=3
 shards=1
@@ -130,7 +131,7 @@ while [ $# -gt 0 ]; do
     --data_bags_only) data_bags_only=true;;
     --provision_only) provision_only=true;;
     --skip_create)    skip_create=true;;
-    --skip_check)     skip_check=false;;
+    --skip_check)     skip_check=true;;
     --nodes)          shift; nodes="$1";;
     --sharded)        shift; shards="$1";;
     --config)         shift; config="$1";;
@@ -148,7 +149,7 @@ if [ $skip_create == false ] && [ $data_bags_only == false ] && \
   log "Running Berkshelf to install Chef cookbook dependencies..."
   berks install -p cookbooks/
 
-  if [ $skip_check == true ]; then
+  if [ $skip_check == false ]; then
     log "Checking for existing instances..."
     if vagrant status | grep -q 'not created'; then
       log "No instance(s) found, creating..."
@@ -166,6 +167,7 @@ if [ $provision_only == false ]; then
 fi
 
 if [ $data_bags_only == false ]; then
+  log "Running 'vagrant provision'..."
   start_time=$(date +%s)
   vagrant provision
   stop_time=$(date +%s)
