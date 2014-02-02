@@ -2,3 +2,4 @@
 cookbooks/
 data_bags/node
 .DS_Store
+mosh-mongodb-*

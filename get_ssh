@@ -1,0 +1,11 @@
+#!/bin/bash -e
+
+rm -f mosh-mongodb-*
+for instance in `vagrant status | grep "running"`; do
+  if [[ "$instance" =~ ^mongodb- ]]; then
+    ip=`vagrant ssh-config $instance | grep HostName | cut -d' ' -f4`
+    echo mosh --ssh=\'ssh -i ~/aws/keys/eu-west-1/jamestyj.pem\' ec2-user@$ip \|\| \\ > mosh-$instance
+    echo ssh -i ~/aws/keys/eu-west-1/jamestyj.pem ec2-user@$ip >> mosh-$instance
+    chmod +x mosh-$instance
+  fi
+done
