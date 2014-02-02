@@ -93,23 +93,15 @@ Vagrant.configure('2') do |config|
     }
   end
 
-  config.vm.define 'mongodb-rs1-data1' do |mongo|
+  def mongodb_provision(config)
     config.vm.provision :chef_solo do |chef|
       mongodb_base_config(chef)
     end
   end
 
-  config.vm.define 'mongodb-rs1-data2' do |mongo|
-    config.vm.provision :chef_solo do |chef|
-      mongodb_base_config(chef)
-    end
-  end
-
-  config.vm.define 'mongodb-rs1-arb' do |mongo|
-    config.vm.provision :chef_solo do |chef|
-      mongodb_base_config(chef)
-      chef.json[:mongodb][:replica_arbiter_only] = true
-      chef.json.delete(:ebs)
+  for i in 1..3
+    config.vm.define "mongodb-rs1-#{i}" do |mongo|
+      mongodb_provision(config)
     end
   end
 end

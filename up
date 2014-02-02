@@ -14,6 +14,10 @@ function usage() {
   echo "  --instance_type TYPE The Amazon EC2 instance type to use. See "
   echo "                       http://aws.amazon.com/ec2/instance-types/ for the full"
   echo "                       list. Defaults to t1.micro."
+  echo "  --data_bags_only     Only generate the data bags for Chef Solo (for replica"
+  echo "                       sets and shards)."
+  echo "  --skip_create        Skip the creation of the instances (e.g. they are"
+  echo "                       already running."
   echo "  --skip_check         Skip check for existing instance(s)."
   echo "  --help               Display this help and exit."
 }
@@ -45,36 +49,70 @@ function run_vagrant() {
   log "Vagrant took $(($stop_time - $start_time))s"
 }
 
+function generate_data_bags() {
+  log "Regenerating data bags with hostnames..."
+  mkdir -p data_bags/node/
+  rm -f    data_bags/node/*
+  for instance in `vagrant status | grep "running"`; do
+    if [[ "$instance" =~ ^mongodb- ]]; then
+      out_file=data_bags/node/$instance.json
+      log "Writing $out_file...
+      "
+      fqdn=`vagrant ssh $instance -c "hostname -f" | grep "^ip"`
+      # Remove trailing newline
+      fqdn="${fqdn%"${fqdn##*[![:space:]]}"}"
+      hostname=`echo $fqdn | cut -d'.' -f1`
+
+      cp data_bags/mongodb.json.template $out_file
+      sed -i .org "s/<FQDN>/$fqdn/" $out_file
+      sed -i .org "s/<HOSTNAME>/$hostname/" $out_file
+      rm $out_file.org
+    fi
+  done
+}
+
 region=eu-west-1
 instance_type=t1.micro
 check_existing=true
+data_bags_only=false
+skip_create=false
+
 while [ $# -gt 0 ]; do
   case "$1" in
-    --region)        shift; region="$1";;
-    --instance_type) shift; instance_type="$1";;
-    --skip_check)    check_existing=false;;
-    -h|--help)       usage; exit 1;;
-    *) break;;
+    --region)         shift; region="$1";;
+    --instance_type)  shift; instance_type="$1";;
+    --data_bags_only) data_bags_only=true;;
+    --skip_create)    skip_create=true;;
+    --skip_check)     check_existing=false;;
+    -h|--help)        usage; exit 1;;
+    *)                break;;
   esac
   shift
 done
 
-check_region "$region"
+if [ $skip_create == false ]; then
+  if [ $data_bags_only == false ]; then
+    check_region "$region"
 
-log "Running Berkshelf to install Chef cookbook dependencies..."
-berks install -p cookbooks/
+    log "Running Berkshelf to install Chef cookbook dependencies..."
+    berks install -p cookbooks/
 
-if [ $check_existing == true ]; then
-  log "Checking for existing instances..."
-  if vagrant status | grep -q 'not created'; then
-    log "No instance(s) found, creating..."
-    run_vagrant
-  else
-    log "Found existing instance(s)"
+    if [ $check_existing == true ]; then
+      log "Checking for existing instances..."
+      if vagrant status | grep -q 'not created'; then
+        log "No instance(s) found, creating..."
+        run_vagrant
+      else
+        log "Found existing instance(s)"
+      fi
+    else
+      run_vagrant
+    fi
   fi
-else
-  run_vagrant
 fi
 
-log "SSH-ing into the instance..."
-vagrant ssh
+generate_data_bags
+
+if [ $data_bags_only == false ]; then
+  VAGRANT_REPLICASET=1 vagrant provision
+fi
