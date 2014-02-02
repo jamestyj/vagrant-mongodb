@@ -3,10 +3,23 @@
 function usage() {
   echo "Usage: ./up [OPTIONS] "
   echo
-  echo "Creates MongoDB instances with Vagrant and Chef. See"
-  echo "https://github.com/jamestyj/vagrant-mongodb for details."
+  echo "Creates a stand-alone MongoDB instance or cluster. The cluster can be a replica"
+  echo "set or sharded with multiple replica sets."
   echo
-  echo "Options:"
+  echo "Currently only Amazon EC2 is supported, but other platforms like Rackspace will"
+  echo "be added. The instances are currently using Amazon Linux, but can be extended to"
+  echo "use other operating systems."
+  echo
+  echo "MongoDB options:"
+  echo "  --nodes NUM          adds NUM data nodes to replica set (requires"
+  echo "                       --replicaset, default=3)"
+  echo "  --sharded NUM        creates NUM of shards, each replica sets (default=1)"
+  echo "  --config NUM         adds NUM config servers to sharded setup (requires"
+  echo "                       --sharded, NUM must be 1 or 3, default=1)"
+  echo "  --mongos NUM         starts NUM mongos processes (requires --sharded,"
+  echo "                       default=1)"
+  echo
+  echo "Amazon EC2 options:"
   echo "  --region REGION      The Amazon EC2 region to use. Valid options are:"
   echo "                       ap-northeast-1, ap-southeast-1, ap-southeast-2,"
   echo "                       eu-west-1, sa-east-1, us-east-1, us-west-1, us-west-2."
@@ -14,6 +27,8 @@ function usage() {
   echo "  --instance_type TYPE The Amazon EC2 instance type to use. See "
   echo "                       http://aws.amazon.com/ec2/instance-types/ for the full"
   echo "                       list. Defaults to t1.micro."
+  echo
+  echo "Additional options:"
   echo "  --data_bags_only     Only generate the data bags for Chef Solo (for replica"
   echo "                       sets and shards)."
   echo "  --provision_only     Only re-provision to re-execute the Chef recipes."
@@ -92,6 +107,10 @@ data_bags_only=false
 provision_only=false
 skip_check=true
 skip_create=false
+nodes=3
+shards=1
+config=1
+mongos=1
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -101,6 +120,10 @@ while [ $# -gt 0 ]; do
     --provision_only) provision_only=true;;
     --skip_create)    skip_create=true;;
     --skip_check)     skip_check=false;;
+    --nodes)          shift; nodes="$1";;
+    --sharded)        shift; shards="$1";;
+    --config)         shift; config="$1";;
+    --mongos)         shift; mongos="$1";;
     -h|--help)        usage; exit 1;;
     *)                break;;
   esac
