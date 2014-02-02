@@ -100,21 +100,21 @@ Vagrant.configure('2') do |config|
 
   # mongod
   for i in 1..3
-    config.vm.define "mongodb-rs1-#{i}" do |mongo|
-      config.vm.provision :chef_solo do |chef|
-        mongodb_base_config(chef)
+    config.vm.define "mongodb-rs1-#{i}" do |mongod|
+      mongod.vm.provision :chef_solo do |mongod_chef|
+        mongodb_base_config(mongod_chef)
       end
     end
   end
 
   # config server
-  config.vm.define "mongodb-cfg-1" do |mongo|
-    config.vm.provision :chef_solo do |chef|
-      chef.add_recipe 'chef-solo-search'
-      chef.add_recipe 'mongodb::configserver' unless ENV['VAGRANT_FIRST_RUN']
-      chef.cookbooks_path = ['cookbooks', 'my_cookbooks']
-      chef.data_bags_path = 'data_bags'
-      chef.json = {
+  config.vm.define "mongodb-cfg-1" do |configsvr|
+    configsvr.vm.provision :chef_solo do |configsvr_chef|
+      configsvr_chef.add_recipe 'chef-solo-search'
+      configsvr_chef.add_recipe 'mongodb::configserver' unless ENV['VAGRANT_FIRST_RUN']
+      configsvr_chef.cookbooks_path = ['cookbooks', 'my_cookbooks']
+      configsvr_chef.data_bags_path = 'data_bags'
+      configsvr_chef.json = {
         mongodb: {
           cluster_name: 'cluster1',
           dbpath:       '/data/configdb',
@@ -126,13 +126,13 @@ Vagrant.configure('2') do |config|
   end
 
   # mongos
-  config.vm.define "mongodb-mongos-1" do |mongo|
-    config.vm.provision :chef_solo do |chef|
-      chef.add_recipe 'chef-solo-search'
-      chef.add_recipe 'mongodb::mongos' unless ENV['VAGRANT_FIRST_RUN']
-      chef.cookbooks_path = ['cookbooks', 'my_cookbooks']
-      chef.data_bags_path = 'data_bags'
-      chef.json = {
+  config.vm.define "mongodb-mongos-1" do |mongos|
+    mongos.vm.provision :chef_solo do |mongos_chef|
+      mongos_chef.add_recipe 'chef-solo-search'
+      mongos_chef.add_recipe 'mongodb::mongos' unless ENV['VAGRANT_FIRST_RUN']
+      mongos_chef.cookbooks_path = ['cookbooks', 'my_cookbooks']
+      mongos_chef.data_bags_path = 'data_bags'
+      mongos_chef.json = {
         mongodb: {
           cluster_name: 'cluster1',
           port:         27017
