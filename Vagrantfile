@@ -79,7 +79,6 @@ Vagrant.configure('2') do |config|
     provision_chef_solo_base(chef)
 
     chef.add_recipe 'ebs' unless ENV['VAGRANT_MINIMAL']
-    # chef.add_recipe 'mongodb::10gen_repo'
     chef.add_recipe 'mongodb'
 
     # Don't include on the first run, as we need to get and distribute the hostnames first.

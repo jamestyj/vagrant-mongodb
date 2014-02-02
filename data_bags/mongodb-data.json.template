@@ -13,6 +13,7 @@
       "is_replicaset": true,
       "is_shard":      true,
       "port": 27017,
+      "replicaset_name": "rs1",
       "replica_build_indexes": true,
       "replica_priority": 1,
       "replica_slave_delay": 0,
