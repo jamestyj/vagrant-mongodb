@@ -64,13 +64,15 @@ Vagrant.configure('2') do |config|
     chef.add_recipe 'mongodb::10gen_repo'
     chef.add_recipe 'mongodb'
 
-    chef.add_recipe 'mongodb::replicaset'
+    # Don't include on the first run, as we need to get and distribute the hostnames first.
+    if ENV['VAGRANT_REPLICASET']
+      chef.add_recipe 'mongodb::replicaset'
+    end
 
     chef.cookbooks_path = ['cookbooks', 'my_cookbooks']
     chef.data_bags_path = 'data_bags'
     chef.json = {
       mongodb: {
-        config:          { replSet: 'rs1' },
         cluster_name:    'rs1',
         shard_name:      'rs1',
         dbpath:          '/data',
@@ -97,60 +99,17 @@ Vagrant.configure('2') do |config|
     end
   end
 
-# config.vm.define 'mongodb-rs1-data2' do |mongo|
-#   config.vm.provision :chef_solo do |chef|
-#     chef.add_recipe 'utils'
-#     chef.add_recipe 'mosh'
-#     chef.add_recipe 'ebs'
-#     chef.add_recipe 'mongodb::10gen_repo'
-#     chef.add_recipe 'mongodb'
-#     chef.add_recipe 'mongodb::replicaset'
+  config.vm.define 'mongodb-rs1-data2' do |mongo|
+    config.vm.provision :chef_solo do |chef|
+      mongodb_base_config(chef)
+    end
+  end
 
-#     chef.cookbooks_path = ['cookbooks', 'my_cookbooks']
-#     chef.json = {
-#       mongodb: {
-#         config:          { replSet: 'rs1' },
-#         cluster_name:    'rs1',
-#         shard_name:      'rs1',
-#         dbpath:          '/data',
-#         replicaset_name: 'rs1',
-#         smallfiles:      true
-#       },
-#       ebs: {
-#         access_key: ENV['AWS_ACCESS_KEY'],
-#         secret_key: ENV['AWS_SECRET_KEY']
-#       }
-#     }
-#     chef.json[:ebs][:volumes] = {
-#       '/data' => {
-#         size:          20,
-#         fstype:        'ext4',
-#         mount_options: 'noatime,noexec'
-#       }
-#     }
-#   end
-# end
-
-# config.vm.define 'mongodb-rs1-arb' do |mongo|
-#   config.vm.provision :chef_solo do |chef|
-#     chef.add_recipe 'utils'
-#     chef.add_recipe 'mosh'
-#     chef.add_recipe 'ebs'
-#     chef.add_recipe 'mongodb::10gen_repo'
-#     chef.add_recipe 'mongodb'
-#     chef.add_recipe 'mongodb::replicaset'
-
-#     chef.cookbooks_path = ['cookbooks', 'my_cookbooks']
-#     chef.json = {
-#       mongodb: {
-#         config:               { replSet: 'rs1' },
-#         shard_name:           'rs1',
-#         cluster_name:         'rs1',
-#         replica_arbiter_only: true,
-#         replicaset_name:      'rs1'
-#       }
-#     }
-#   end
-# end
-
+  config.vm.define 'mongodb-rs1-arb' do |mongo|
+    config.vm.provision :chef_solo do |chef|
+      mongodb_base_config(chef)
+      chef.json[:mongodb][:replica_arbiter_only] = true
+      chef.json.delete(:ebs)
+    end
+  end
 end

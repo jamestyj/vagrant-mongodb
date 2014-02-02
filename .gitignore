@@ -1,3 +1,4 @@
 .vagrant/
 cookbooks/
 data_bags/
+.DS_Store
