@@ -13,9 +13,9 @@
   "default": {
     "fqdn": "<FQDN>",
     "mongodb": {
-      "cluster_name": "rs1",
+      "cluster_name": "<SET_NAME>",
+      "shard_name":   "<SET_NAME>",
       "is_replicaset": true,
-      "shard_name": "rs1",
       "port": 27017,
       "replica_build_indexes": true,
       "replica_priority": 1,

@@ -75,8 +75,8 @@ Vagrant.configure('2') do |config|
       mongodb: {
         cluster_name:    'rs1',
         shard_name:      'rs1',
-        dbpath:          '/data',
         replicaset_name: 'rs1',
+        dbpath:          '/data',
         smallfiles:      true
       },
       ebs: {
