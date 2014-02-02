@@ -56,6 +56,8 @@ function run_vagrant() {
 
 function generate_data_bags() {
   set_name=$1
+  start_time=$(date +%s)
+
   log "Regenerating data bags with hostnames..."
   mkdir -p data_bags/node/
   rm -f    data_bags/node/*
@@ -80,6 +82,8 @@ function generate_data_bags() {
           data_bags/mongodb-$in_file.json.template > $out_file
     fi
   done
+  stop_time=$(date +%s)
+  log "Data bag generation took $(($stop_time - $start_time))s"
 }
 
 region=eu-west-1
@@ -128,5 +132,8 @@ if [ $provision_only == false ]; then
 fi
 
 if [ $data_bags_only == false ]; then
+  start_time=$(date +%s)
   vagrant provision
+  stop_time=$(date +%s)
+  log "Vagrant provision took $(($stop_time - $start_time))s"
 fi
