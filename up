@@ -72,7 +72,8 @@ function generate_data_bags() {
       [[ "$instance" =~ cfg ]]    && in_file="config"
       [[ "$instance" =~ mongos ]] && in_file="mongos"
 
-      sed -e "s/<FQDN>/$fqdn/" \
+      sed -e "s/<NAME>/$instance/" \
+          -e "s/<FQDN>/$fqdn/" \
           -e "s/<HOSTNAME>/$hostname/" \
           -e "s/<SET_NAME>/$set_name/" \
           data_bags/mongodb-$in_file.json.template > $out_file

@@ -1,6 +1,6 @@
 {
-  "id":   "<FQDN>",
-  "name": "<FQDN>",
+  "id":   "<NAME>",
+  "name": "<NAME>",
   "automatic": {
     "hostname": "<HOSTNAME>",
     "os":       "centos"
@@ -11,6 +11,7 @@
       "cluster_name": "cluster1",
       "shard_name":   "<SET_NAME>",
       "is_replicaset": true,
+      "is_shard":      true,
       "port": 27017,
       "replica_build_indexes": true,
       "replica_priority": 1,
@@ -20,7 +21,8 @@
       "config": {
         "port": 27019
       }
-    }
+    },
+    "recipes": [ "mongodb::replicaset" ]
   },
   "chef_type": "node",
   "normal": {},
