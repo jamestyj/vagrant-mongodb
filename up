@@ -12,7 +12,7 @@ log "Checking for existing instances..."
 if vagrant status | grep -q 'not created'; then
   log "No instance found, creating new one..."
   start_time=$(date +%s)
-  VAGRANT_AWS_INSTANCE_TYPE=t1.micro vagrant up --provider=aws
+  vagrant up --provider=aws
   stop_time=$(date +%s)
   log "Vagrant took $(($stop_time - $start_time))s"
 else
