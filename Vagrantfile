@@ -65,8 +65,8 @@ Vagrant.configure('2') do |config|
   # See http://docs.mongodb.org/manual/administration/production-notes/ for
   # details.
   config.vm.provision :chef_solo do |chef|
-    chef.add_recipe 'utils'
     chef.add_recipe 'mosh'
+    chef.add_recipe 'utils'
     chef.add_recipe 'ebs'
     chef.add_recipe 'mongodb::10gen_repo'
     chef.add_recipe 'mongodb'
