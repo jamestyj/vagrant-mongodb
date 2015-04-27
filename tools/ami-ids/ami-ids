@@ -1,23 +1,34 @@
 #!/usr/bin/env ruby
+#
+# https://aws.amazon.com/marketplace/pp/B00O7WM7QW
 
 require 'aws-sdk'
 
-puts "AMI NAME                          AMI ID        REGION"
-
-amis = {}
-AWS.regions.each do |reg|
-  amis[reg.name] = {}
-  reg.ec2.images.with_owner('amazon').each do |ami|
-    if ami.name =~ /^amzn-ami-pv-201(.+)x86_64-ebs/ &&
-        (amis[reg.name][:name].nil? || ami.name > amis[reg.name][:name])
-      amis[reg.name] = { id: ami.id, name: ami.name }
-    end
-  end
-  puts "#{amis[reg.name][:name]}  #{amis[reg.name][:id]}  #{reg.name}"
+threads   = []
+image_ids = {}
+Aws::EC2::Client.new(region: 'eu-west-1').describe_regions.data.regions.each do |r|
+    threads << Thread.new {
+        puts "Checking #{r.region_name}..."
+        Aws::EC2::Client.new(region: r.region_name).describe_images({
+            owners: ['679593333241'],
+            filters: [
+                { name: 'architecture', values: ['x86_64'] },
+                { name: 'image-type', values: ['machine'] },
+                { name: 'state', values: ['available'] },
+                { name: 'virtualization-type', values: ['hvm'] }
+            ]
+        }).data.each do |image_set|
+            image_set.each do |img|
+                if img.name =~ /^CentOS 7 x86_64/
+                    image_ids[r.region_name] = img.image_id
+                end
+            end
+        end
+        puts "Got #{r.region_name}"
+    }
 end
-
 puts
-
-amis.keys.sort.each do |reg|
-  printf "aws.region_config %-17s :ami => '%s'\n", "'#{reg}',", amis[reg][:id]
+threads.each{ |t| t.join }
+image_ids.keys.sort.each do |reg|
+    printf "aws.region_config %-17s :ami => '%s'\n", "'#{reg}',", image_ids[reg]
 end
