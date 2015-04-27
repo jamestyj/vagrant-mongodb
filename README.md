@@ -77,9 +77,10 @@ about 5 mins.
      `~/aws/keys/eu-west-1/jamestyj.pem`. You can override this with the
      environment variable `VAGRANT_SSH_PRIVATE_KEY_PATH`.
 
-  1. Create an EC2 security group (firewall rule) named 'MongoDB'. It must
-     allow incoming traffic on TCP ports 22 (SSH) and 27017 (MongoDB). We also
-     recommend opening UDP ports 60000 to 60010 for Mosh (SSH replacement).
+  1. Create an EC2 security group (firewall rule) named `mms-automation`. It
+     must allow at least incoming traffic on TCP ports 22 (SSH) and 27017
+     (MongoDB). We also recommend opening UDP ports 60000 to 60010 for Mosh
+     (SSH replacement).
 
 ### 2.2  Vagrant config
 
