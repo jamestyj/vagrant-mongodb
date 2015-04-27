@@ -1,4 +1,4 @@
-site :opscode
+source 'https://api.berkshelf.com'
 
 cookbook 'aws'
 cookbook 'delayed_evaluator'

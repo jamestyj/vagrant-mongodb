@@ -1,46 +1,39 @@
-{
-  "sources": {
-    "aws": {
-      "locked_version": "0.101.6"
-    },
-    "delayed_evaluator": {
-      "locked_version": "0.2.0"
-    },
-    "ebs": {
-      "locked_version": "0.3.6",
-      "git": "git://github.com/jamestyj/chef-ebs.git",
-      "ref": "98030d8d26023d6561039f0e0d3e7d1597b3e1ac"
-    },
-    "mongodb": {
-      "locked_version": "0.14.4",
-      "git": "git://github.com/edelight/chef-mongodb.git",
-      "ref": "2ea5fc251769de185f2bc003538797b84cf09441"
-    },
-    "mosh": {
-      "locked_version": "0.3.0",
-      "git": "git://github.com/jtimberman/mosh-cookbook",
-      "ref": "fc47d1a27f171e13e84467da96b4479a86baf0ec"
-    },
-    "utils": {
-      "path": "./my_cookbooks/utils"
-    },
-    "yum": {
-      "locked_version": "2.3.4"
-    },
-    "apt": {
-      "locked_version": "2.3.4"
-    },
-    "python": {
-      "locked_version": "1.4.4"
-    },
-    "build-essential": {
-      "locked_version": "1.4.2"
-    },
-    "runit": {
-      "locked_version": "1.5.8"
-    },
-    "yum-epel": {
-      "locked_version": "0.2.0"
-    }
-  }
-}
+DEPENDENCIES
+  aws
+  delayed_evaluator
+  ebs
+    git: git://github.com/jamestyj/chef-ebs.git
+    revision: 98030d8d26023d6561039f0e0d3e7d1597b3e1ac
+  mongodb
+    git: git://github.com/edelight/chef-mongodb.git
+    revision: dc5836318a27331f605f264d946931927dd26bb8
+  mosh
+    git: git://github.com/jtimberman/mosh-cookbook
+    revision: 1a85fc0ae22d6c5f3ea208e0db3e9a3a0c70eb3a
+  utils
+    path: my_cookbooks/utils
+  yum
+
+GRAPH
+  apt (2.7.0)
+  aws (2.7.0)
+  build-essential (2.2.3)
+  delayed_evaluator (0.2.0)
+  ebs (0.3.6)
+    aws (>= 0.101.0)
+    delayed_evaluator (>= 0.0.0)
+  mongodb (0.16.3)
+    apt (>= 1.8.2)
+    python (>= 0.0.0)
+    yum (>= 3.0.0)
+  mosh (0.4.0)
+    apt (>= 0.0.0)
+    yum (>= 0.0.0)
+    yum-epel (>= 0.0.0)
+  python (1.4.6)
+    build-essential (>= 0.0.0)
+    yum-epel (>= 0.0.0)
+  utils (0.0.1)
+  yum (3.6.0)
+  yum-epel (0.6.0)
+    yum (~> 3.0)
